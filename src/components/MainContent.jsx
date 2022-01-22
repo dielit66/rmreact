@@ -29,8 +29,8 @@ function MainContent() {
         <div className="main-content">
             <img alt={'Логотип123'} className={'rm-logo'} src={rmLogo}/>
 <div className={'form-filter'}>
-            <FormControl  sx={{ m: 1, minWidth: 120 }}    className={'form-filter'} >
-                <InputLabel id="search-input">Filter by name...</InputLabel>
+            <FormControl  sx={{ m: 1, minWidth: 120 }}    className={'filter-item'} >
+                <InputLabel  id="search-input">Filter by name...</InputLabel>
                 <Select
                     labelId="search-input"
                     id="demo-simple-select"
@@ -42,7 +42,7 @@ function MainContent() {
                     <MenuItem value={30}>Thirty</MenuItem>
                 </Select>
             </FormControl>
-            <FormControl  sx={{ m: 1, minWidth: 120 }}    className={'form-filter'} >
+            <FormControl  sx={{ m: 1, minWidth: 120 }}    className={'filter-item'} >
                 <InputLabel id="species-input">Species</InputLabel>
                 <Select
                     labelId="species-input"
@@ -55,7 +55,7 @@ function MainContent() {
                     <MenuItem value={30}>Thirty</MenuItem>
                 </Select>
             </FormControl>
-            <FormControl  sx={{ m: 1, minWidth: 120 }}    className={'form-filter'}  >
+            <FormControl  sx={{ m: 1, minWidth: 120 }}   className={'filter-item'}  >
                 <InputLabel id="gender-input">Gender</InputLabel>
                 <Select
                     labelId="gender-input"
@@ -68,7 +68,7 @@ function MainContent() {
                     <MenuItem value={30}>Thirty</MenuItem>
                 </Select>
             </FormControl>
-            <FormControl  sx={{ m: 1, minWidth: 120 }}   className={'form-filter'} >
+            <FormControl  sx={{ m: 1, minWidth: 120 }}    className={'filter-item'} >
                 <InputLabel id="status-input">Status</InputLabel>
                 <Select
                     labelId="status-input"
@@ -85,9 +85,13 @@ function MainContent() {
 </div>
             <div className={'char-list'}>
                 {charData.map(data => <div className={'char-item'}>
+                    <div className={'img-form'}>
                     <img src={data.image} alt=""/>
-                    <p>{data.name}</p>
-                <p> {data.species}</p>
+                    </div>
+                    <div className={'text-form'}>
+                    <p className={'name-form'}>{data.name}</p>
+                <p className={'species-form'}> {data.species}</p>
+                    </div>
                 </div>)}
             </div>
         </div>

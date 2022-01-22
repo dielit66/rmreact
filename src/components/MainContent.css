@@ -12,6 +12,7 @@
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
+    margin:0 !important;
 }
 .select-filter{
     width: 24%;
@@ -20,20 +21,65 @@
     display: flex;
     flex-wrap: wrap;
     justify-content:space-between ;
-
-
 }
 .char-item{
     width: 24%;
     margin-bottom: 2vh;
     display: flex;
     flex-direction:column ;
-
     align-items: flex-start;
     box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2), 0px 3px 4px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.14);
     border-radius: 4px;
 }
+.char-item:hover {
+    box-shadow:
+            1px 1px rgb(26,190,214),
+            2px 2px rgb(26,190,214),
+            3px 3px rgb(26,190,214),
+            4px 4px rgb(26,190,214),
+            5px 5px rgb(26,190,214),
+            6px 6px rgb(26,190,214),
+            7px 7px rgb(26,190,214);
+    -webkit-transform: translateX(-7px);
+    transform: translateX(-7px);
+}
+
 .char-item img{
+
+}
+.img-form{
+    width: 100%;
+    height: fit-content;
+    height: 80%;
+
+}
+.img-form img{
+    height: 100%;
+    object-fit: cover;
     width: 100%;
     pointer-events: none;
+}
+.text-form{
+    font-family: 'Roboto', sans-serif;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 10px;
+}
+.name-form{
+    color: rgba(0, 0, 0, 0.87);
+    font-weight: 500;
+    font-size: 24px;
+}
+.species-form{
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    color: rgba(0, 0, 0, 0.6);
+}
+.filter-item{
+    width: 24%;
+    margin: 0 !important;
+    margin-bottom: 1vh !important;
 }
