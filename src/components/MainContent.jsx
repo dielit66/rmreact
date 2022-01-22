@@ -6,23 +6,61 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import InfiniteScroll from "react-infinite-scroll-component";
+import {TextField} from "@mui/material";
+
+
 
 
 function MainContent() {
 
-
-
     const [charData, setCharData] = useState([]);
-    useEffect( () => {
+    const [requestData, setRequestData] = useState([]);
+    let [currentPage, setCurrentPage] = useState(1)
+    let [searchValue, setSearchValue] = useState('')
+    let [speciesValue, setSpeciesValue] = useState('')
+    let [genderValue, setGenderValue] = useState('')
+    let [statusValue, setStatusValue] = useState('')
+    const [totalPages, setTotalPages] =  useState(0)
 
-      axios
-            .get('https://rickandmortyapi.com/api/character')
-            .then((response)=>{
+    useEffect(  () => {
 
+      const refreshData = async () => {
+       const response = await axios('https://rickandmortyapi.com/api/character?page=1')
+          setRequestData(response.data)
+          setCharData(response.data.results)
+          setTotalPages(response.data.info.pages)
+          console.log(response)
+      }
+            refreshData();
+    },[]
+    )
+    useEffect(  () => {
+
+            const refreshData = async () => {
+                const response = await axios('https://rickandmortyapi.com/api/character?page=1&name=' + searchValue + '&species=' + speciesValue + '&gender=' + genderValue + '&status=' + statusValue)
+                setRequestData(response.data)
                 setCharData(response.data.results)
-                console.log(charData)
+                setTotalPages(response.data.info.pages)
+                console.log(response)
+            }
+            refreshData();
+        },[searchValue,speciesValue,genderValue,statusValue]
+    )
+
+
+    function fetchData() {
+        console.log(currentPage)
+         setCurrentPage(currentPage++)
+        console.log(currentPage)
+      axios
+            .get('https://rickandmortyapi.com/api/character?page=' + currentPage + '&name=' + searchValue)
+            .then((response)=>{
+                setCharData(charData.concat(response.data.results))
+                setRequestData(response.data)
             })
-    });
+       console.log(charData)
+    }
 
     return (
 
@@ -30,42 +68,51 @@ function MainContent() {
             <img alt={'Логотип123'} className={'rm-logo'} src={rmLogo}/>
 <div className={'form-filter'}>
             <FormControl  sx={{ m: 1, minWidth: 120 }}    className={'filter-item'} >
-                <InputLabel  id="search-input">Filter by name...</InputLabel>
-                <Select
-                    labelId="search-input"
-                    id="demo-simple-select"
+                <TextField onChange={(e)=>{
+                    setSearchValue(e.target.value)
 
-                    label="Age"
-                >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
+                }
+                }
+                           type="search"   className={'search-input'} id="outlined-basic" label="Search" variant="outlined" />
             </FormControl>
             <FormControl  sx={{ m: 1, minWidth: 120 }}    className={'filter-item'} >
-                <InputLabel id="species-input">Species</InputLabel>
+                <InputLabel  id="species-input">Species</InputLabel>
                 <Select
+                    onChange={(e)=>{
+                        setSpeciesValue(e.target.value)
+
+                    }}
+
                     labelId="species-input"
                     id="demo-simple-select"
-
                     label="Age"
                 >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
+                    <MenuItem value={''}>All</MenuItem>
+                    <MenuItem value={'human'}>Human</MenuItem>
+                    <MenuItem value={'alien'}>Alien</MenuItem>
+                    <MenuItem value={'humanoid'}>Humanoid</MenuItem>
+                    <MenuItem value={'unknown'}>Unknown</MenuItem>
+                    <MenuItem value={'robot'}>Robot</MenuItem>
                 </Select>
             </FormControl>
             <FormControl  sx={{ m: 1, minWidth: 120 }}   className={'filter-item'}  >
                 <InputLabel id="gender-input">Gender</InputLabel>
                 <Select
+                    onChange={(e)=>{
+                        setGenderValue(e.target.value)
+
+                    }}
+
+                    labelId="species-input"
+                    id="demo-simple-select"
                     labelId="gender-input"
                     id="demo-simple-select"
-
-                    label="Age"
                 >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
+                    <MenuItem value={''}>All</MenuItem>
+                    <MenuItem value={'male'}>Male</MenuItem>
+                    <MenuItem value={'female'}>Female</MenuItem>
+                    <MenuItem value={'genderless'}>Genderless </MenuItem>
+                    <MenuItem value={'unknown'}>Unknown </MenuItem>
                 </Select>
             </FormControl>
             <FormControl  sx={{ m: 1, minWidth: 120 }}    className={'filter-item'} >
@@ -73,27 +120,35 @@ function MainContent() {
                 <Select
                     labelId="status-input"
                     id="demo-simple-select"
+                    onChange={(e)=>{
+                        setStatusValue(e.target.value)
 
+                    }}
                     label="Age"
                 >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
+                    <MenuItem value={'alive'}>Alive</MenuItem>
+                    <MenuItem value={'dead'}>Dead</MenuItem>
+                    <MenuItem value={'unknown'}>Unknown</MenuItem>
                 </Select>
             </FormControl>
 
 </div>
-            <div className={'char-list'}>
-                {charData.map(data => <div className={'char-item'}>
-                    <div className={'img-form'}>
-                    <img src={data.image} alt=""/>
-                    </div>
-                    <div className={'text-form'}>
-                    <p className={'name-form'}>{data.name}</p>
-                <p className={'species-form'}> {data.species}</p>
-                    </div>
-                </div>)}
-            </div>
+
+
+<div className={"char-list"}>
+
+                    {charData.map(data => <div key={data.id} className={'char-item'}>
+                        <div className={'img-form'}>
+                            <img src={data.image} alt=""/>
+                        </div>
+                        <div className={'text-form'}>
+                            <p className={'name-form'}>{data.name}</p>
+                            <p className={'species-form'}> {data.species}</p>
+                        </div>
+
+                    </div>)}
+                </div>
+
         </div>
     );
 }
