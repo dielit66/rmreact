@@ -22,23 +22,37 @@ function MainContent() {
     let [genderValue, setGenderValue] = useState('')
     let [statusValue, setStatusValue] = useState('')
     const [totalPages, setTotalPages] =  useState(0)
+    const [loading, setLoading] = useState(false);
+    const [noData, setNoData] = useState(false);
+
+    window.onscroll = () => {
+        if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight) {
+            if(!noData) {
+                fetchData();
+            }
+        }
+    }
 
     useEffect(  () => {
 
       const refreshData = async () => {
        const response = await axios('https://rickandmortyapi.com/api/character?page=1')
+          setLoading(true)
+
           setRequestData(response.data)
           setCharData(response.data.results)
           setTotalPages(response.data.info.pages)
-          console.log(response)
+
       }
             refreshData();
     },[]
     )
     useEffect(  () => {
-
+console.log('inf')
             const refreshData = async () => {
-                const response = await axios('https://rickandmortyapi.com/api/character?page=1&name=' + searchValue + '&species=' + speciesValue + '&gender=' + genderValue + '&status=' + statusValue)
+                setCurrentPage(1)
+                const response = await axios('https://rickandmortyapi.com/api/character?page=' + currentPage + '&name=' + searchValue + '&species=' + speciesValue + '&gender=' + genderValue + '&status=' + statusValue)
+                if(response.data.info.next == null){setNoData(true)}
                 setRequestData(response.data)
                 setCharData(response.data.results)
                 setTotalPages(response.data.info.pages)
@@ -50,15 +64,18 @@ function MainContent() {
 
 
     function fetchData() {
-        console.log(currentPage)
-         setCurrentPage(currentPage++)
-        console.log(currentPage)
+         setCurrentPage(currentPage + 1)
       axios
-            .get('https://rickandmortyapi.com/api/character?page=' + currentPage + '&name=' + searchValue)
+            .get(requestData.info.next)
             .then((response)=>{
+                if(response.data.info.next == null){setNoData(true)}
+                setLoading(true)
                 setCharData(charData.concat(response.data.results))
                 setRequestData(response.data)
             })
+          .finally(()=>{
+              setLoading(false)
+          })
        console.log(charData)
     }
 
@@ -125,7 +142,7 @@ function MainContent() {
 
                     }}
                     label="Age"
-                >
+                ><MenuItem value={''}>All</MenuItem>
                     <MenuItem value={'alive'}>Alive</MenuItem>
                     <MenuItem value={'dead'}>Dead</MenuItem>
                     <MenuItem value={'unknown'}>Unknown</MenuItem>
@@ -147,8 +164,10 @@ function MainContent() {
                         </div>
 
                     </div>)}
-                </div>
 
+</div>
+            {loading ? <div className="text-center">loading data ...</div> : "" }
+            {noData ? <div className="text-center">no data anymore ...</div> : "" }
         </div>
     );
 }
